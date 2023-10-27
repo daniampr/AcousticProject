@@ -28,8 +28,8 @@ def hpf(audio, sr, cutoff):
      @param cutoff: cutoff frequency
      @return: filtered audio signal
     '''
-    if y.dtype==str:
-        y, sr = librosa.load(y)
+    if audio.dtype==str:  #case y is a path
+        audio, sr = librosa.load(audio)
     
     # Design the Butterworth low-pass filter
     nyquist = 0.5 * sr
@@ -37,6 +37,6 @@ def hpf(audio, sr, cutoff):
     b, a = butter(5, normal_cutoff, btype='highpass', analog=False)
 
     # Apply the filter to the audio signal
-    y_filtered = filtfilt(b, a, y)
-    return y_filtered
+    filtered = filtfilt(b, a, audio)
+    return filtered
 

@@ -1,19 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import librosa
-def plotSpectogram(path):
-    y, sr = librosa.load(path)
-    spec = np.fft.fft(y)
-    # shifted_spec=np.fft.fftshift(spec)
-    freq = np.fft.fftfreq(y.shape[-1])
-    D = librosa.stft(y)
-    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
-    # fig, (ax1,ax2) = plt.subplots(2)
-    plt.plot(freq, spec.real, freq, spec.imag)
-    # plt.magnitude_spectrum(y)
-    # img = librosa.display.specshow(S_db, x_axis='time', y_axis='log', ax=ax2)
-    # ax2.set(title='Using a logarithmic frequency axis')
-    # fig.colorbar(img, ax=ax2, format="%+2.f dB")
-    plt.show()
-plotSpectogram("sounds/room_service_bass.m4a")
+#from processing import lpf, hpf
+from compression import desample, wav_to_mp3
+from IPython.display import Audio
+#from playsound import playsound
+from pydub import AudioSegment
 
+
+
+def main():
+   # audio, sr = librosa.load("sounds\g-major_chordAcoustic.wav", sr=44100)
+   # print(sr)
+    #print("loaded")
+   # playsound(audio)
+   # audio_2, sr= desample(audio, 2)
+   # playsound(audio_2)
+    new_mp3= wav_to_mp3("g-major_chordAcoustic.wav")
+    print("loaded mp3")
+if __name__ == "__main__":
+    main()
+    
