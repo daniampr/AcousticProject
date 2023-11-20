@@ -1,3 +1,6 @@
+# Here's the content related to the Seminar 2
+
+
 import librosa
 from scipy.signal import butter, lfilter, filtfilt
 
@@ -23,6 +26,7 @@ def lpf(y, sr, cutoff):
 def hpf(audio, sr, cutoff):
     '''
     Creates a low-pass filter to remove high frequencies from the audio signal
+    Parameters
      @param audio: audio signal
      @param sr: sampling rate
      @param cutoff: cutoff frequency
@@ -39,4 +43,6 @@ def hpf(audio, sr, cutoff):
     # Apply the filter to the audio signal
     filtered = filtfilt(b, a, audio)
     return filtered
+
+
 
