@@ -1,6 +1,6 @@
 import streamlit as st
 from pydub import AudioSegment
-from compression import convertSoundFile
+from compression import convertSoundFile, load_audio
 from utils import getSize
 
 st.set_page_config(
@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # Title and subtitle for the app
-st.title("Advanced Sound Player 🔊")
+st.title("Acoustic Project 🔊")
 st.write("Customize your sound playback experience!")
 
 # Dictionary of our sounds
@@ -39,8 +39,8 @@ formats = ["mp3", "wav", "m4a", "aac", "flac", "ogg", "opus", "wma", "alac", "ai
 selected_format = st.selectbox('Select output format:', formats)
 
 # Slider for selecting sample rate
-sample_rate_options = [8000, 16000, 22050, 24000, 44100, 48000]
-sample_rate = st.select_slider('Sample Rate (Hz):', options=sample_rate_options, value=sample_rate_options[-1])
+sr_options = [8000, 16000, 22050, 24000, 44100, 48000]
+sr = st.select_slider('Sample Rate (Hz):', options=sr_options, value=sr_options[-1])
 
 # Slider for selecting bit rate [to do]
 
@@ -49,19 +49,19 @@ _,_, col1, col2, col3,_, _ = st.columns(7)
 
 # Button to play the sound
 if col1.button('Play Original Sound'):
-    audio = sounds[sound_index]['path']
-    st.audio(audio, format=f'audio/{selected_format}')
+    audio_path = sounds[sound_index]['path']
+    #audio= load_audio(audio_path, sr) #loads audio & changes sample rate
+    st.audio(audio_path, format=f'audio/{selected_format}') #plays audio
     
 if col2.button('Save Converted Sound'):
-    audio = sounds[sound_index]['path']
-    new_audio = convertSoundFile(audio, selected_format)
+    audio_path = sounds[sound_index]['path']
+    new_audio = convertSoundFile(audio_path, selected_format)
+    print(new_audio.dtype)
     st.download_button(label="Download Converted Sound", data=new_audio, file_name=f"converted_sound.{selected_format}")
     
 
 # Button to play the converted soundd
 if col3.button('Play Converted Sound'):
-    
-    audio = sounds[sound_index]['path']
-    new_audio = convertSoundFile(audio, selected_format)
-    
+    audio_path = sounds[sound_index]['path']
+    new_audio = convertSoundFile(audio_path, sr, selected_format)
     st.audio(new_audio, format=f'audio/{selected_format}')
