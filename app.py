@@ -16,10 +16,10 @@ st.write("Customize your sound playback experience!")
 
 # Dictionary of our sounds
 sounds = [
-    {'name': "G Major Guitar Chord", 'path': 'sounds/G Major Guitar Chord.wav'},
-    {'name': "Room Service House Bass", 'path': 'sounds/room_service_bass.m4a'},
-    {'name': "Nirvana Guitar", 'path': 'sounds/Nirvana - Smell Like Teen Spirit (Guitar Only).mp3'},
-    {'name': "Bass solo", 'path': "sounds/Incredible Victor Wooten solo bass jam.mp3"},
+    {'name': "G Major Guitar Chord", 'path': 'sounds//G Major Guitar Chord.wav'},
+    {'name': "Room Service House Bass", 'path': 'sounds//room_service_bass.m4a'},
+    {'name': "Nirvana Guitar", 'path': 'sounds//Nirvana - Smell Like Teen Spirit (Guitar Only).mp3'},
+    {'name': "Bass solo", 'path': "sounds//Incredible Victor Wooten solo bass jam.mp3"},
     {'name': "Custom (Upload your audio)", 'path': ""}
 ]
 
@@ -40,7 +40,7 @@ selected_format = st.selectbox('Select output format:', formats)
 
 # Slider for selecting sample rate
 sr_options = [8000, 16000, 22050, 24000, 44100, 48000]
-sr = st.select_slider('Sample Rate (Hz):', options=sr_options, value=sr_options[-1])
+sr = int(st.select_slider('Sample Rate (Hz):', options=sr_options, value=sr_options[-1]))
 
 # Slider for selecting bit rate [to do]
 
@@ -55,13 +55,13 @@ if col1.button('Play Original Sound'):
     
 if col2.button('Save Converted Sound'):
     audio_path = sounds[sound_index]['path']
-    new_audio = convertSoundFile(audio_path, selected_format)
-    print(new_audio.dtype)
-    st.download_button(label="Download Converted Sound", data=new_audio, file_name=f"converted_sound.{selected_format}")
+    new_audio = convertSoundFile(audio_path,sr,inputFormat=audio_path[-3:],outputFormat=selected_format)
+    with open(f"sounds_mp3_audio.{selected_format}", "rb") as f:
+        st.download_button(label="Download Converted Sound", data=f, file_name=f"converted_sound.{selected_format}", mime=f"audio/{selected_format}")
     
 
 # Button to play the converted soundd
 if col3.button('Play Converted Sound'):
     audio_path = sounds[sound_index]['path']
-    new_audio = convertSoundFile(audio_path, sr, selected_format)
+    new_audio = convertSoundFile(audio_path,sr,inputFormat=audio_path[-3:],outputFormat=selected_format)
     st.audio(new_audio, format=f'audio/{selected_format}')

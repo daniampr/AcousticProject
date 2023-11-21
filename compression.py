@@ -12,7 +12,7 @@ def convertSoundFile(audio, sr=44100, inputFormat="wav", outputFormat="mp3"):
     if isinstance(audio, str):
         audio = AudioSegment.from_file(audio, format=inputFormat)
         audio = audio.set_frame_rate(sr)
-    return audio.export("sounds_mp3_audio.mp3", format=outputFormat)
+    return audio.export(f"sounds_mp3_audio.{outputFormat}", format=outputFormat)
 
 def load_audio(audio, sr, inputFormat="wav"):
     if isinstance(audio, str):
