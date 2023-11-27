@@ -2,6 +2,7 @@
 
 from pydub import AudioSegment
 import librosa
+import soundfile as sf
 import numpy as np
 
 
@@ -19,3 +20,8 @@ def load_audio(audio, sr, inputFormat="wav"):
         audio,_ = librosa.load(audio, sr=sr)
         return audio
     return audio.set_frame_rate(sr)
+def save_audio(audio, sr):
+    if isinstance(audio, str):
+        audio = load_audio(audio, sr)
+    sf.write("sounds_mp3_audio.wav", audio, sr, format="wav")
+    
