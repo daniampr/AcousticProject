@@ -1,7 +1,26 @@
 import streamlit as st
+from io import BytesIO
 from pydub import AudioSegment
 from compression import convertSoundFile, load_audio
 from utils import getSize
+
+
+def play_st_audio(audio_data, format):
+    # Check if audio_data is already an AudioSegment object
+    if isinstance(audio_data, AudioSegment):
+        audio_segment = audio_data
+    else:
+        # If it's a file-like object, read it into an AudioSegment
+        audio_segment = AudioSegment.from_file(audio_data, format=format)
+
+    # Convert the AudioSegment to a binary buffer
+    buffer = BytesIO()
+    audio_segment.export(buffer, format=format)
+    buffer.seek(0)
+
+    # Use the buffer in st.audio
+    st.audio(buffer, format=f'audio/{format}')
+
 
 st.set_page_config(
     page_title="Sound Player",
@@ -45,17 +64,18 @@ sr = int(st.select_slider('Sample Rate (Hz):', options=sr_options, value=sr_opti
 # Slider for selecting bit rate [to do]
 
 # Create two columns for placing the buttons
-_,_, col1, col2, col3,_, _ = st.columns(7)
+_,_, col1, col2, col3,_,_ = st.columns(7)
 
 # Button to play the sound
 if col1.button('Play Original Sound'):
     audio_path = sounds[sound_index]['path']
     #audio= load_audio(audio_path, sr) #loads audio & changes sample rate
     st.audio(audio_path, format=f'audio/{selected_format}') #plays audio
-    
+
+
 if col2.button('Save Converted Sound'):
     audio_path = sounds[sound_index]['path']
-    new_audio = convertSoundFile(audio_path,sr,inputFormat=audio_path[-3:],outputFormat=selected_format)
+    new_audio = convertSoundFile(audio_path,sr,inputFormat=audio_path[-3:],outputFormat=selected_format)   
     with open(f"sounds_mp3_audio.{selected_format}", "rb") as f:
         st.download_button(label="Download Converted Sound", data=f, file_name=f"converted_sound.{selected_format}", mime=f"audio/{selected_format}")
     
@@ -64,4 +84,4 @@ if col2.button('Save Converted Sound'):
 if col3.button('Play Converted Sound'):
     audio_path = sounds[sound_index]['path']
     new_audio = convertSoundFile(audio_path,sr,inputFormat=audio_path[-3:],outputFormat=selected_format)
-    st.audio(new_audio, format=f'audio/{selected_format}')
+    play_st_audio(new_audio, selected_format)
