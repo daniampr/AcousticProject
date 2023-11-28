@@ -49,7 +49,7 @@ sounds = [
 
 
 # Dropdown for selecting a sound format
-formats = ["mp3", "wav", "m4a", "aac", "ogg", "wma"]
+formats = ["mp3", "wav", "m4a"]
 soundName, sound_index, selected_format= st_soundSelector()
 
 

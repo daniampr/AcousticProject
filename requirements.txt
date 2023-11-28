@@ -4,3 +4,4 @@ librosa
 scipy
 streamlit
 pydub
+plotly
