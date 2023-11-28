@@ -10,6 +10,29 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+def st_soundSelector(formats=["mp3", "wav", "m4a", "aac", "ogg", "wma"]):
+    # Dropdown for selecting a sound
+    selected_sound = st.selectbox('Select sound:', [s['name'] for s in sounds]) #returns name
+    sound_index= [s['name'] for s in sounds].index(selected_sound) #returns index
+    if selected_sound == 'Custom (Upload your audio)':
+        uploaded_file = st.file_uploader("Choose a file")
+        if uploaded_file is not None:
+            filename = uploaded_file.name
+            with open(filename, "wb") as f:
+                f.write(uploaded_file.getvalue())
+            sounds[4]['path'] = filename
+            sound_index = 4
+    
+    isOriginal= "(Original format)"
+    originalFormat= sounds[sound_index]['path'][-3:]
+    originalFormat_idx= formats.index(originalFormat)
+    if isOriginal not in formats:   
+        formats = [f"{format} {isOriginal}" if format == originalFormat else format for format in formats]
+
+    selected_format = st.selectbox('Select output format:', formats, index=originalFormat_idx) #returns name
+
+    return selected_sound, sound_index, selected_format
+
 # Title and subtitle for the app
 st.title("Acoustic Project 🔊")
 st.write("Customize your sound playback experience!")
@@ -23,23 +46,13 @@ sounds = [
     {'name': "Custom (Upload your audio)", 'path': ""}
 ]
 
-# Dropdown for selecting a sound
-selected_sound = st.selectbox('Select sound:', [s['name'] for s in sounds]) #returns name
-sound_index= [s['name'] for s in sounds].index(selected_sound) #returns index
-if selected_sound == 'Custom (Upload your audio)':
-    uploaded_file = st.file_uploader("Choose a file")
-    if uploaded_file is not None:
-        filename = uploaded_file.name
-        with open(filename, "wb") as f:
-            f.write(uploaded_file.getvalue())
-        # custom_path = uploaded_file.read()
-        # st.write("File size:", getSize(uploaded_file.size))
-        sounds[4]['path'] = filename
-        sound_index = 4
+
 
 # Dropdown for selecting a sound format
 formats = ["mp3", "wav", "m4a", "aac", "ogg", "wma"]
-selected_format = st.selectbox('Select output format:', formats)
+soundName, sound_index, selected_format= st_soundSelector()
+
+
 
 # Slider for selecting sample rate
 sr_options = [8000, 16000, 22050, 24000, 44100, 48000]
