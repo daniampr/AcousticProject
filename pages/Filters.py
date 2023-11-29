@@ -38,8 +38,6 @@ if selected_sound == 'Custom (Upload your audio)':
 # Dropdown for selecting a sound format
 f_formats = ["HPF", "LPF"]
 selected_filter = st.sidebar.selectbox('Select the type of filter:', f_formats)
-formats = ["mp3", "wav", "m4a", "aac", "ogg", "wma"]
-selected_format = st.sidebar.selectbox('Select output format:', formats)
 
 # Slider for selecting sample rate
 sr_options = [8000, 16000, 22050, 24000, 44100, 48000]
@@ -54,7 +52,7 @@ col1, col2= st.sidebar.columns(2)
 # Button to play the sound
 audio_path = sounds[sound_index]['path']
 st.sidebar.write('Original Sound:')
-st.sidebar.audio(audio_path, format=f'audio/{selected_format}') #plays audio
+st.sidebar.audio(audio_path, format=f'audio/{audio_path[-3:]}') #plays audio
     
 if col1.button('Save Converted Sound'):
     audio_path = sounds[sound_index]['path']
@@ -62,15 +60,12 @@ if col1.button('Save Converted Sound'):
     if selected_filter == "HPF":
         filtered_audio = processing.hpf(original_audio, sr, cutoff)
         save_audio(filtered_audio, sr)
-        convertSoundFile("sounds_mp3_audio.wav", sr, inputFormat="wav", outputFormat=selected_format)
-
     else:
         filtered_audio = processing.lpf(original_audio, sr, cutoff)
         save_audio(filtered_audio, sr)
-        convertSoundFile("sounds_mp3_audio.wav", sr, inputFormat="wav", outputFormat=selected_format)
     
-    with open(f"sounds_mp3_audio.{selected_format}", "rb") as f:
-        st.sidebar.download_button(label="Download Converted Sound", data=f, file_name=f"converted_sound.{selected_format}", mime=f"audio/{selected_format}")
+    with open(f"sounds_mp3_audio.wav", "rb") as f:
+        st.sidebar.download_button(label="Download Converted Sound", data=f, file_name=f"converted_sound.wav", mime=f"audio/wav")
     
 # Button to play the converted soundd
 if col2.button('Play Filtered Sound'):
@@ -95,5 +90,9 @@ elif selected_filter == "LPF":
     filtered_audio = processing.lpf(y, sr, cutoff)
 else:
     filtered_audio= y
-fig = plots.plotSpectrum(filtered_audio,sr)
+fig = plots.plotSpectrum(filtered_audio, sr)
+fig_signal= plots.plotSignal(filtered_audio, sr)
+    
 st.pyplot(fig)
+st.plotly_chart(fig_signal, use_container_width=True)
+st.write(f"Plotting {audio_path} with a sample rate of {sr} Hz")
