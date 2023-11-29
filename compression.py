@@ -35,16 +35,19 @@ def save_audio(audio, sr):
         audio = load_audio(audio, sr)
     sf.write("sounds_mp3_audio.wav", audio, sr, format="wav")
     
-def get_file_size(file_path):
-    #Returns the size of the file in bytes.
+def getSize(path):
     try:
-        size = os.path.getsize(file_path)
-        if size > 1024 and size <= 1048576:
-            size = size/1024
-            return size, "KB"
+        if isinstance(path, BytesIO):
+            path.seek(0, os.SEEK_END)  # Go to end of file
+            size = path.tell()         # Get size
+            path.seek(0)               
+        else:
+            size = os.path.getsize(path)
+        
+        if size > 1024 and size<=1048576:
+            return size/1024, "KB"
         elif size >= 1048576:
-            size = size/1048576
-            return size, "MB"
+            return size/1048576, "MB"
         else:
             return size, "bytes"
     except OSError as e:
