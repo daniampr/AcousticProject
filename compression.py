@@ -12,16 +12,23 @@ def desample(audio, n):
     return audio[0::n], 44100//n
   
 def convertSoundFile(audio, sr=44100, inputFormat="wav", outputFormat="mp3"):
+    if outputFormat == "m4a" and inputFormat !="m4a":
+        outputFormat = "mp3"
     if isinstance(audio, str):
         audio = AudioSegment.from_file(audio, format=inputFormat)
-    audio = audio.set_frame_rate(sr)
+        audio = audio.set_frame_rate(sr)
+        # Use an in-memory buffer 
+        buffer = BytesIO()
+        audio.export(buffer, format=outputFormat)
+        buffer.seek(0)  # Reset the buffer to the start
+        return buffer
+    # case audio is numpy array
+    elif isinstance(audio, np.ndarray):
+        save_audio(audio, sr, outputFormat)
 
-    # Use an in-memory buffer 
-    buffer = BytesIO()
-    audio.export(buffer, format=outputFormat)
-    buffer.seek(0)  # Reset the buffer to the start
+    #audio_array = (audio_array * 32767).astype(np.int16)
+
     
-    return buffer
 
 def load_audio(audio, sr, inputFormat="wav"):
     if isinstance(audio, str):
@@ -30,10 +37,11 @@ def load_audio(audio, sr, inputFormat="wav"):
     return audio.set_frame_rate(sr)
 
 
-def save_audio(audio, sr):
+def save_audio(audio, sr, outputFormat):
+    # For cases we have a numpy array
     if isinstance(audio, str):
         audio = load_audio(audio, sr)
-    sf.write("sounds_mp3_audio.wav", audio, sr, format="wav")
+    sf.write(f"sounds_mp3_audio.{outputFormat}", audio, sr, format=outputFormat)
     
 def getSize(path):
     try:

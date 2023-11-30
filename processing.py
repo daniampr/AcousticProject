@@ -5,8 +5,8 @@ import librosa
 from scipy.signal import butter, lfilter, filtfilt
 
 def lpf(audio, sr, cutoff):
-    if audio.dtype==str:  #case y is a path
-        audio, sr = librosa.load(audio)
+    if type(audio)==str:  #case y is a path
+        audio, sr = librosa.load(audio, sr=sr)
     b, a = butter(10, cutoff, fs=sr, btype='low', analog=False)
     y_filtered = lfilter(b, a, audio)
     return y_filtered
@@ -21,8 +21,8 @@ def hpf(audio, sr, cutoff):
      @param cutoff: cutoff frequency
      @return: filtered audio signal
     '''
-    if audio.dtype==str:  #case y is a path
-        audio, sr = librosa.load(audio)
+    if type(audio)==str:  #case y is a path
+        audio, sr = librosa.load(audio, sr=sr)
     
     # Design the Butterworth low-pass filter
     nyquist = 0.5 * sr
